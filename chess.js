@@ -1,4 +1,4 @@
-const boardSquares = document.querySelectorAll('square');
+const boardSquares = document.querySelectorAll('.square');
 const pieces = document.getElementsByClassName('piece');
 const pieceImg = document.getElementsByTagName('img');
 const div = document.querySelector('div')
@@ -24,46 +24,43 @@ const wknight2 = document.getElementById("wknight2");
 const wrook2 = document.getElementById("wrook2");
 
 
-const a8 = document.getElementById("a8");
-
-
-
+// Functions allowing drops inside the Squares.
 function allowDrop(event) {
     event.preventDefault();
 }
 
+// Function for dragging the ID of the pieces.
 function drag(event){
     event.dataTransfer.setData("text", event.target.id);
 }
 
+// Function for dropping the pieces into other squares and on other pieces.
 function drop(event){
     
     event.preventDefault();
     var data = event.dataTransfer.getData("text");
-
     let draggedElement = document.getElementById(data);
-    let targetSquare = event.target;
-    var existingImage = targetSquare.querySelector("img");
+    let targetSquare = event.target.closest('.square');
+    let child = targetSquare.firstElementChild;
+ 
 
-    if ((hasClass(targetSquare, 'square'))){
-            
+// If targetSquare exists, the draggedElement is droped in the square. 
+    if (targetSquare) {
         targetSquare.appendChild(draggedElement); 
-    }  else {
-        targetSquare.removeChild(draggedElement)
     }
 
-} 
-
-
-function hasClass(element, classNameToTestFor) {
-    var classNames = element.className.split(' ');
-    for (var i = 0; i < classNames.length; i++) {
-        if (classNames[i].toLowerCase() == classNameToTestFor.toLowerCase()) {
-            return true;
-        }
+    if (targetSquare.children == 'coordinatesLetterW' || 'cordinatesLetterB')
+// If there already exists a piece in the target square, the piece is removed.
+    if (targetSquare.children.length > 0) {
+        targetSquare.removeChild(child);
     }
-    return false;
-}
+
+ 
+
+
+}  
+
+
 
 
 
