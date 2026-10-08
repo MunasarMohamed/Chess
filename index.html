@@ -4,6 +4,7 @@
         <title>Chess</title>
         <link rel="stylesheet" href="style.css">
         <link rel="icon" type="image/png" href="images/chess icon.png">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/peerjs/1.5.5/peerjs.min.js" defer></script>
         <script src="chess.js" defer></script>
     </head>
     <body>
@@ -173,10 +174,16 @@
             <span class="capturedImages"></span>
             <span class="points">0 points</span>
         </div>
-        <!-- Below the board: "New game" when a game has ended -->
+        <!-- Below the board: "New game" when a game has ended, and the online game (create a game, send the link, connection status) -->
         <div class="onlinePanel">
             <div class="panelButtons">
                 <button class="onlineButton hidden" id="newGameButton" onclick="startNewGame()">New game</button>
+                <button class="onlineButton" id="createGameButton" onclick="createOnlineGame()">Create online game</button>
+            </div>
+            <span class="onlineStatus" id="onlineStatus"></span>
+            <div class="shareLinkRow">
+                <input class="shareLink hidden" id="shareLink" readonly onclick="this.select()">
+                <button class="onlineButton hidden" id="copyLinkButton" onclick="copyShareLink()">Copy link</button>
             </div>
         </div>
     </body>

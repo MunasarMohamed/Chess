@@ -213,7 +213,7 @@ img:hover {
     cursor: pointer;
 }
 
-/* The panel below the board with the "New game" button.
+/* The panel below the board with the "New game" button and the online game.
    order: 4 keeps it at the bottom when the board is flipped. */
 .onlinePanel {
     order: 4;
@@ -226,7 +226,7 @@ img:hover {
     font-size: 16px;
 }
 
-/* The buttons below the board, side by side. */
+/* "New game" and "Create online game" side by side. */
 .panelButtons {
     display: flex;
     gap: 8px;
@@ -243,7 +243,22 @@ img:hover {
     cursor: pointer;
 }
 
-/* Hides an element, for example the promotion picker or the "New game" button.
+.shareLinkRow {
+    display: flex;
+    gap: 8px;
+}
+
+.shareLink {
+    width: 320px;
+    max-width: 60vw;
+    padding: 6px;
+    font-family: Arial;
+    font-size: 14px;
+    border: 2px solid #b58863;
+    border-radius: 6px;
+}
+
+/* Hides an element, for example the promotion picker, the "New game" button or the link before the game is created.
    It is the last rule in the file, so it wins over the display of the element's own class. */
 .hidden {
     display: none;

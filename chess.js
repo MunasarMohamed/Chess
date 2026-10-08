@@ -38,6 +38,14 @@ const pieceValues = { pawn: 1, knight: 3, bishop: 3, rook: 5, queen: 9, king: 0 
 // It is null in a local game, where both players use the same computer.
 let myColor = null;
 
+// The PeerJS peer and the connection to the opponent in an online game. Both are null in a local game.
+let peer = null;
+let connection = null;
+
+// All moves of the game so far, like { from: "e7", to: "e8", promotion: "queen" }.
+// In an online game, White sends them to Black when Black joins or rejoins, so both boards are the same.
+let moveHistory = [];
+
 // Function for reading the starting position from the pieces in the HTML.
 function readBoardFromDom() {
     for (let i = 0; i < boardSquares.length; i++) {
@@ -440,6 +448,7 @@ function applyMove(from, to, promotion) {
         renderCapturedPieces();
     }
 
+    moveHistory.push({ from: from, to: to, promotion: promotion || null });
     showLastMove(from, to);
     updateTurnIndicator();
     showCheck();
@@ -504,8 +513,15 @@ function renderCapturedPieces() {
 }
 
 // Function for showing whose turn it is above the board.
+// In an online game it says "Your turn" or "Opponent's turn" instead, and the dot still shows the color.
 function updateTurnIndicator() {
-    document.getElementById('turnText').textContent = currentTurn == 'white' ? "White's turn" : "Black's turn";
+    let text = currentTurn == 'white' ? "White's turn" : "Black's turn";
+
+    if (myColor) {
+        text = currentTurn == myColor ? 'Your turn' : "Opponent's turn";
+    }
+
+    document.getElementById('turnText').textContent = text;
     document.getElementById('turnIndicator').classList.toggle('blackTurn', currentTurn == 'black');
 }
 
@@ -637,6 +653,7 @@ function restartGame() {
 
     capturedPieces = { white: [], black: [] };
     renderCapturedPieces();
+    moveHistory = [];
 
     for (let square of boardSquares) {
         square.classList.remove('lastMove');
@@ -651,8 +668,12 @@ function restartGame() {
 }
 
 // Function for the "New game" button that appears when a game has ended.
+// In an online game the opponent's board is reset too, and both players keep their colors.
 function startNewGame() {
     restartGame();
+    if (connection && connection.open) {
+        connection.send({ type: 'newGame' });
+    }
 }
 
 // Function for checking if a move takes a pawn to the last rank, so it has to be promoted.
@@ -669,6 +690,7 @@ function playMove(from, to) {
         showPromotionPicker(from, to);
     } else {
         applyMove(from, to);
+        sendMove(from, to, null);
     }
 }
 
@@ -694,6 +716,7 @@ function choosePromotion(type) {
     pendingPromotion = null;
     document.getElementById('promotionPicker').classList.add('hidden');
     applyMove(move.from, move.to, type);
+    sendMove(move.from, move.to, type);
 }
 
 // Function for cancelling a promotion by clicking next to the choices. The pawn stays where it was.
@@ -709,7 +732,12 @@ function cancelPromotion(event) {
 
 // Function for checking if the player at this computer may move right now. In a local game both colors
 // are played here. In an online game only your own color can be moved, and only on your turn.
+// While the opponent is not connected, no moves can be made, so the two boards can't get out of step.
 function canPlayerMove() {
+    if (myColor && !(connection && connection.open)) {
+        return false;
+    }
+
     return !gameOver && (myColor == null || myColor == currentTurn);
 }
 
@@ -719,6 +747,10 @@ function setMyColor(color) {
     myColor = color;
     clearSelection();
     document.body.classList.toggle('flipped', color == 'black');
+
+    if (!gameOver) {
+        updateTurnIndicator();
+    }
 }
 
 // Functions allowing drops inside the Squares.
@@ -828,4 +860,203 @@ function clickSquare(event) {
     } else {
         clearSelection();
     }
+}
+
+// ---------------------------------------------------------------------------------------------
+// Online games with PeerJS. The player who creates the game plays White and gets a link.
+// The player who opens the link plays Black. Each move is sent as { type: "move", from, to, promotion }
+// and is checked with the same rules on the other side before it is made there.
+// ---------------------------------------------------------------------------------------------
+
+// Function for showing a message about the online game below the board.
+function setOnlineStatus(text) {
+    document.getElementById('onlineStatus').textContent = text;
+}
+
+// Function for showing or hiding the link that White sends to the opponent.
+function showShareLink(visible) {
+    document.getElementById('shareLink').classList.toggle('hidden', !visible);
+    document.getElementById('copyLinkButton').classList.toggle('hidden', !visible);
+}
+
+// Function for creating an online game. This player plays White and gets a link for the opponent.
+function createOnlineGame() {
+    if (typeof Peer == 'undefined') {
+        setOnlineStatus('Online games are not available right now (PeerJS could not be loaded).');
+        return;
+    }
+
+    document.getElementById('createGameButton').classList.add('hidden');
+    setOnlineStatus('Creating the game...');
+    restartGame();
+    setMyColor('white');
+
+    peer = new Peer();
+    peer.on('open', function (id) {
+        document.getElementById('shareLink').value = location.href.split('#')[0] + '#join=' + id;
+        showShareLink(true);
+        setOnlineStatus('Waiting for your opponent. Send them this link:');
+    });
+
+// The opponent connects through the link. If they connect again, for example after reloading the page,
+// the new connection replaces the old one.
+    peer.on('connection', function (newConnection) {
+        useConnection(newConnection);
+    });
+
+    peer.on('error', showPeerError);
+}
+
+// Function for joining an online game from a link. This player plays Black.
+function joinOnlineGame(hostId) {
+    if (typeof Peer == 'undefined') {
+        setOnlineStatus('Online games are not available right now (PeerJS could not be loaded).');
+        return;
+    }
+
+    document.getElementById('createGameButton').classList.add('hidden');
+    setOnlineStatus('Connecting to the game...');
+    setMyColor('black');
+
+    peer = new Peer();
+    peer.on('open', function () {
+        useConnection(peer.connect(hostId, { reliable: true }));
+    });
+    peer.on('error', showPeerError);
+}
+
+// Function for using a connection to the opponent. Messages from an old, replaced connection are ignored.
+function useConnection(newConnection) {
+    let oldConnection = connection;
+    connection = newConnection;
+
+    if (oldConnection) {
+        oldConnection.close();
+    }
+
+    newConnection.on('open', function () {
+        showShareLink(false);
+        setOnlineStatus('Connected. You play ' + (myColor == 'white' ? 'White' : 'Black') + '.');
+
+// White has the game as it is, and sends all moves so far to Black.
+        if (myColor == 'white') {
+            newConnection.send({ type: 'sync', moves: moveHistory });
+        }
+    });
+
+    newConnection.on('data', function (data) {
+        if (newConnection == connection) {
+            receiveMessage(data);
+        }
+    });
+
+    newConnection.on('close', function () {
+        if (newConnection != connection) {
+            return;
+        }
+
+        clearSelection();
+        if (myColor == 'white') {
+            showShareLink(true);
+            setOnlineStatus('Your opponent left the game. They can join again with the same link:');
+        } else {
+            setOnlineStatus('The connection to your opponent was lost. Reload the page to join again.');
+        }
+    });
+}
+
+// Function for showing a message when PeerJS reports a problem.
+function showPeerError(error) {
+    if (error.type == 'peer-unavailable') {
+        setOnlineStatus('This game could not be found. The link may be old, or the other player has closed the game.');
+    } else if (error.type == 'network' || error.type == 'server-error' || error.type == 'socket-error' || error.type == 'socket-closed') {
+        setOnlineStatus('Could not reach the online game server. Check your internet connection and reload the page.');
+    } else if (error.type == 'browser-incompatible') {
+        setOnlineStatus('This browser does not support online games.');
+    } else {
+        setOnlineStatus('Something went wrong with the online game (' + error.type + ').');
+    }
+}
+
+// Function for sending a move made on this computer to the opponent. Nothing is sent in a local game.
+function sendMove(from, to, promotion) {
+    if (connection && connection.open) {
+        connection.send({ type: 'move', from: from, to: to, promotion: promotion });
+    }
+}
+
+// Function for handling a message from the opponent.
+function receiveMessage(data) {
+    if (!data) {
+        return;
+    }
+
+// Black gets the whole game from White and plays all moves on a fresh board.
+    if (data.type == 'sync' && myColor == 'black' && Array.isArray(data.moves)) {
+        restartGame();
+        for (let move of data.moves) {
+            if (!makeReceivedMove(move)) {
+                setOnlineStatus('The game from your opponent could not be loaded. Reload the page to try again.');
+                return;
+            }
+        }
+    }
+
+// The opponent started a new game. If both players clicked "New game" at the same time, this board is
+// already reset (the game is no longer over), and the message is ignored so no new moves are lost.
+    if (data.type == 'newGame' && gameOver) {
+        restartGame();
+    }
+
+// A move is only made if it is the opponent's turn and the move follows the rules.
+    if (data.type == 'move') {
+        if (currentTurn == myColor || !makeReceivedMove(data)) {
+            setOnlineStatus('Your opponent sent a move that is not allowed. Reload the page to load the game again.');
+        }
+    }
+}
+
+// Function for checking a move from the opponent and making it if it is legal.
+// Returns false if the move is not allowed.
+function makeReceivedMove(move) {
+    let squarePattern = /^[a-h][1-8]$/;
+
+    if (!move || !squarePattern.test(move.from) || !squarePattern.test(move.to) || !isLegalMove(move.from, move.to)) {
+        return false;
+    }
+
+// A pawn that reaches the last rank must come with one of the four pieces it can become.
+    let promotion = null;
+    if (isPromotion(move.from, move.to)) {
+        if (!['queen', 'rook', 'bishop', 'knight'].includes(move.promotion)) {
+            return false;
+        }
+        promotion = move.promotion;
+    }
+
+    applyMove(move.from, move.to, promotion);
+    return true;
+}
+
+// Function for copying the link for the opponent.
+function copyShareLink() {
+    let input = document.getElementById('shareLink');
+    let button = document.getElementById('copyLinkButton');
+
+    input.select();
+    if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(input.value);
+    } else {
+        document.execCommand('copy');
+    }
+
+    button.textContent = 'Copied!';
+    setTimeout(function () {
+        button.textContent = 'Copy link';
+    }, 1500);
+}
+
+// When the page is opened with a link like "index.html#join=<id>", this player joins that game as Black.
+if (location.hash.startsWith('#join=')) {
+    joinOnlineGame(location.hash.slice('#join='.length));
 }
