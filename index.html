@@ -1,154 +1,183 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Chess </title>
+        <title>Chess</title>
         <link rel="stylesheet" href="style.css">
         <link rel="icon" type="image/png" href="images/chess icon.png">
         <script src="chess.js" defer></script>
     </head>
     <body>
+        <div class="turnIndicator" id="turnIndicator">
+            <span class="turnDot"></span>
+            <span id="turnText">White's turn</span>
+        </div>
+        <!-- The pieces Black has captured, shown on Black's side of the board -->
+        <div class="capturedRow" id="blackCaptures">
+            <span class="capturedImages"></span>
+            <span class="points">0 points</span>
+        </div>
         <div class="chessBoard">
             <!-- 8th Rank -->
-            <div class="square white" id="a8" ondrop="drop(event)" ondragover="allowDrop(event)">
-                <img src="pieces/Rook(black).png" id="brook1" draggable="true" ondragstart="drag(event)" alt="rook">
+            <div class="square white" id="a8" ondrop="drop(event)" ondragover="allowDrop(event)" onclick="clickSquare(event)">
+                <img src="pieces/Rook(black).png" id="brook1" draggable="true" ondragstart="drag(event)" ondragend="dragEnd(event)" alt="rook">
             </div>
-            <div class="square black" id="b8"ondrop="drop(event)" ondragover="allowDrop(event)">
-                <img src="pieces/Knight(black).png" id="bknight1" draggable="true" ondragstart="drag(event)" alt="knight">
+            <div class="square black" id="b8" ondrop="drop(event)" ondragover="allowDrop(event)" onclick="clickSquare(event)">
+                <img src="pieces/Knight(black).png" id="bknight1" draggable="true" ondragstart="drag(event)" ondragend="dragEnd(event)" alt="knight">
             </div>
-            <div class="square white" id="c8" ondrop="drop(event)" ondragover="allowDrop(event)">
-                <img src="pieces/Bishop(black).png" id="bbishop1" draggable="true" ondragstart="drag(event)" alt="bishop">
+            <div class="square white" id="c8" ondrop="drop(event)" ondragover="allowDrop(event)" onclick="clickSquare(event)">
+                <img src="pieces/Bishop(black).png" id="bbishop1" draggable="true" ondragstart="drag(event)" ondragend="dragEnd(event)" alt="bishop">
             </div>
-            <div class="square black" id="d8" ondrop="drop(event)" ondragover="allowDrop(event)">
-                <img src="pieces/Queen(black).png" id="bqueen" draggable="true" ondragstart="drag(event)" alt="queen">
+            <div class="square black" id="d8" ondrop="drop(event)" ondragover="allowDrop(event)" onclick="clickSquare(event)">
+                <img src="pieces/Queen(black).png" id="bqueen" draggable="true" ondragstart="drag(event)" ondragend="dragEnd(event)" alt="queen">
             </div>
-            <div class="square white" id="e8" ondrop="drop(event)" ondragover="allowDrop(event)">
-                <img src="pieces/King(black).png" id="bking" draggable="true" ondragstart="drag(event)" alt="king">
+            <div class="square white" id="e8" ondrop="drop(event)" ondragover="allowDrop(event)" onclick="clickSquare(event)">
+                <img src="pieces/King(black).png" id="bking" draggable="true" ondragstart="drag(event)" ondragend="dragEnd(event)" alt="king">
             </div>
-            <div class="square black" id="f8" ondrop="drop(event)" ondragover="allowDrop(event)">
-                <img src="pieces/Bishop(black).png" id="bbishop2" draggable="true" ondragstart="drag(event)" alt="bishop">
+            <div class="square black" id="f8" ondrop="drop(event)" ondragover="allowDrop(event)" onclick="clickSquare(event)">
+                <img src="pieces/Bishop(black).png" id="bbishop2" draggable="true" ondragstart="drag(event)" ondragend="dragEnd(event)" alt="bishop">
             </div>
-            <div class="square white" id="g8" ondrop="drop(event)" ondragover="allowDrop(event)">
-                <img src="pieces/Knight(black).png" id="bknight2" draggable="true" ondragstart="drag(event)" alt="knight">
+            <div class="square white" id="g8" ondrop="drop(event)" ondragover="allowDrop(event)" onclick="clickSquare(event)">
+                <img src="pieces/Knight(black).png" id="bknight2" draggable="true" ondragstart="drag(event)" ondragend="dragEnd(event)" alt="knight">
             </div>
-            <div class="square black" id="h8" ondrop="drop(event)" ondragover="allowDrop(event)">
-                <img src="pieces/Rook(black).png" id="brook2" draggable="true" ondragstart="drag(event)" alt="rook">
+            <div class="square black" id="h8" ondrop="drop(event)" ondragover="allowDrop(event)" onclick="clickSquare(event)">
+                <img src="pieces/Rook(black).png" id="brook2" draggable="true" ondragstart="drag(event)" ondragend="dragEnd(event)" alt="rook">
             </div>
             <!-- 7th Rank -->
-            <div class="square black" id="a7" ondrop="drop(event)" ondragover="allowDrop(event)">
-                <img src="pieces/Pawn(black).png" id="bpawn1" draggable="true" ondragstart="drag(event)" alt="pawn">
+            <div class="square black" id="a7" ondrop="drop(event)" ondragover="allowDrop(event)" onclick="clickSquare(event)">
+                <img src="pieces/Pawn(black).png" id="bpawn1" draggable="true" ondragstart="drag(event)" ondragend="dragEnd(event)" alt="pawn">
             </div>
-            <div class="square white" id="b7" ondrop="drop(event)" ondragover="allowDrop(event)">
-                <img src="pieces/Pawn(black).png" id="bpawn2" draggable="true" ondragstart="drag(event)" alt="pawn">
+            <div class="square white" id="b7" ondrop="drop(event)" ondragover="allowDrop(event)" onclick="clickSquare(event)">
+                <img src="pieces/Pawn(black).png" id="bpawn2" draggable="true" ondragstart="drag(event)" ondragend="dragEnd(event)" alt="pawn">
             </div>
-            <div class="square black" id="c7" ondrop="drop(event)" ondragover="allowDrop(event)">
-                <img src="pieces/Pawn(black).png" id="bpawn3" draggable="true" ondragstart="drag(event)" alt="pawn">
+            <div class="square black" id="c7" ondrop="drop(event)" ondragover="allowDrop(event)" onclick="clickSquare(event)">
+                <img src="pieces/Pawn(black).png" id="bpawn3" draggable="true" ondragstart="drag(event)" ondragend="dragEnd(event)" alt="pawn">
             </div>
-            <div class="square white" id="d7" ondrop="drop(event)" ondragover="allowDrop(event)">
-                <img src="pieces/Pawn(black).png" id="bpawn4" draggable="true" ondragstart="drag(event)" alt="pawn">
+            <div class="square white" id="d7" ondrop="drop(event)" ondragover="allowDrop(event)" onclick="clickSquare(event)">
+                <img src="pieces/Pawn(black).png" id="bpawn4" draggable="true" ondragstart="drag(event)" ondragend="dragEnd(event)" alt="pawn">
             </div>
-            <div class="square black" id="e7" ondrop="drop(event)" ondragover="allowDrop(event)">
-                <img src="pieces/Pawn(black).png" id="bpawn5" draggable="true" ondragstart="drag(event)" alt="pawn">
+            <div class="square black" id="e7" ondrop="drop(event)" ondragover="allowDrop(event)" onclick="clickSquare(event)">
+                <img src="pieces/Pawn(black).png" id="bpawn5" draggable="true" ondragstart="drag(event)" ondragend="dragEnd(event)" alt="pawn">
             </div>
-            <div class="square white" id="f7" ondrop="drop(event)" ondragover="allowDrop(event)">
-                <img src="pieces/Pawn(black).png" id="bpawn6" draggable="true" ondragstart="drag(event)" alt="pawn">
+            <div class="square white" id="f7" ondrop="drop(event)" ondragover="allowDrop(event)" onclick="clickSquare(event)">
+                <img src="pieces/Pawn(black).png" id="bpawn6" draggable="true" ondragstart="drag(event)" ondragend="dragEnd(event)" alt="pawn">
             </div>
-            <div class="square black" id="g7" ondrop="drop(event)" ondragover="allowDrop(event)">
-                <img src="pieces/Pawn(black).png" id="bpawn7" draggable="true" ondragstart="drag(event)" alt="pawn">
+            <div class="square black" id="g7" ondrop="drop(event)" ondragover="allowDrop(event)" onclick="clickSquare(event)">
+                <img src="pieces/Pawn(black).png" id="bpawn7" draggable="true" ondragstart="drag(event)" ondragend="dragEnd(event)" alt="pawn">
             </div>
-            <div class="square white" id="h7" ondrop="drop(event)" ondragover="allowDrop(event)">
-                <img src="pieces/Pawn(black).png" id="bpawn8" draggable="true" ondragstart="drag(event)" alt="pawn">
+            <div class="square white" id="h7" ondrop="drop(event)" ondragover="allowDrop(event)" onclick="clickSquare(event)">
+                <img src="pieces/Pawn(black).png" id="bpawn8" draggable="true" ondragstart="drag(event)" ondragend="dragEnd(event)" alt="pawn">
             </div>
             <!-- 6th Rank -->
-            <div class="square white" id="a6" ondrop="drop(event)" ondragover="allowDrop(event)">
+            <div class="square white" id="a6" ondrop="drop(event)" ondragover="allowDrop(event)" onclick="clickSquare(event)">
             </div>
-            <div class="square black" id="b6" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
-            <div class="square white" id="c6" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
-            <div class="square black" id="d6" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
-            <div class="square white" id="e6" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
-            <div class="square black" id="f6" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
-            <div class="square white" id="g6" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
-            <div class="square black" id="h6" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+            <div class="square black" id="b6" ondrop="drop(event)" ondragover="allowDrop(event)" onclick="clickSquare(event)"></div>
+            <div class="square white" id="c6" ondrop="drop(event)" ondragover="allowDrop(event)" onclick="clickSquare(event)"></div>
+            <div class="square black" id="d6" ondrop="drop(event)" ondragover="allowDrop(event)" onclick="clickSquare(event)"></div>
+            <div class="square white" id="e6" ondrop="drop(event)" ondragover="allowDrop(event)" onclick="clickSquare(event)"></div>
+            <div class="square black" id="f6" ondrop="drop(event)" ondragover="allowDrop(event)" onclick="clickSquare(event)"></div>
+            <div class="square white" id="g6" ondrop="drop(event)" ondragover="allowDrop(event)" onclick="clickSquare(event)"></div>
+            <div class="square black" id="h6" ondrop="drop(event)" ondragover="allowDrop(event)" onclick="clickSquare(event)"></div>
             <!-- 5th Rank -->
-            <div class="square black" id="a5" ondrop="drop(event)" ondragover="allowDrop(event)">
+            <div class="square black" id="a5" ondrop="drop(event)" ondragover="allowDrop(event)" onclick="clickSquare(event)">
             </div>
-            <div class="square white" id="b5" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
-            <div class="square black" id="c5" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
-            <div class="square white" id="d5" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
-            <div class="square black" id="e5" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
-            <div class="square white" id="f5" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
-            <div class="square black" id="g5" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
-            <div class="square white" id="h5" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+            <div class="square white" id="b5" ondrop="drop(event)" ondragover="allowDrop(event)" onclick="clickSquare(event)"></div>
+            <div class="square black" id="c5" ondrop="drop(event)" ondragover="allowDrop(event)" onclick="clickSquare(event)"></div>
+            <div class="square white" id="d5" ondrop="drop(event)" ondragover="allowDrop(event)" onclick="clickSquare(event)"></div>
+            <div class="square black" id="e5" ondrop="drop(event)" ondragover="allowDrop(event)" onclick="clickSquare(event)"></div>
+            <div class="square white" id="f5" ondrop="drop(event)" ondragover="allowDrop(event)" onclick="clickSquare(event)"></div>
+            <div class="square black" id="g5" ondrop="drop(event)" ondragover="allowDrop(event)" onclick="clickSquare(event)"></div>
+            <div class="square white" id="h5" ondrop="drop(event)" ondragover="allowDrop(event)" onclick="clickSquare(event)"></div>
             <!-- 4th Rank -->
-            <div class="square white" id="a4" ondrop="drop(event)" ondragover="allowDrop(event)">
+            <div class="square white" id="a4" ondrop="drop(event)" ondragover="allowDrop(event)" onclick="clickSquare(event)">
             </div>
-            <div class="square black" id="b4" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
-            <div class="square white" id="c4" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
-            <div class="square black" id="d4" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
-            <div class="square white" id="e4" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
-            <div class="square black" id="f4" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
-            <div class="square white" id="g4" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
-            <div class="square black" id="h4" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+            <div class="square black" id="b4" ondrop="drop(event)" ondragover="allowDrop(event)" onclick="clickSquare(event)"></div>
+            <div class="square white" id="c4" ondrop="drop(event)" ondragover="allowDrop(event)" onclick="clickSquare(event)"></div>
+            <div class="square black" id="d4" ondrop="drop(event)" ondragover="allowDrop(event)" onclick="clickSquare(event)"></div>
+            <div class="square white" id="e4" ondrop="drop(event)" ondragover="allowDrop(event)" onclick="clickSquare(event)"></div>
+            <div class="square black" id="f4" ondrop="drop(event)" ondragover="allowDrop(event)" onclick="clickSquare(event)"></div>
+            <div class="square white" id="g4" ondrop="drop(event)" ondragover="allowDrop(event)" onclick="clickSquare(event)"></div>
+            <div class="square black" id="h4" ondrop="drop(event)" ondragover="allowDrop(event)" onclick="clickSquare(event)"></div>
             <!-- 3rd Rank -->
-            <div class="square black" id="a3" ondrop="drop(event)" ondragover="allowDrop(event)">
+            <div class="square black" id="a3" ondrop="drop(event)" ondragover="allowDrop(event)" onclick="clickSquare(event)">
             </div>
-            <div class="square white" id="b3" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
-            <div class="square black" id="c3" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
-            <div class="square white" id="d3" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
-            <div class="square black" id="e3" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
-            <div class="square white" id="f3" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
-            <div class="square black" id="g3" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
-            <div class="square white" id="h3" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
-            <!-- 2end Rank -->
-            <div class="square white" id="a2" ondrop="drop(event)" ondragover="allowDrop(event)">
-                <img src="pieces/Pawn(white).png" id="wpawn1" draggable="true" ondragstart="drag(event)" alt="pawn">
+            <div class="square white" id="b3" ondrop="drop(event)" ondragover="allowDrop(event)" onclick="clickSquare(event)"></div>
+            <div class="square black" id="c3" ondrop="drop(event)" ondragover="allowDrop(event)" onclick="clickSquare(event)"></div>
+            <div class="square white" id="d3" ondrop="drop(event)" ondragover="allowDrop(event)" onclick="clickSquare(event)"></div>
+            <div class="square black" id="e3" ondrop="drop(event)" ondragover="allowDrop(event)" onclick="clickSquare(event)"></div>
+            <div class="square white" id="f3" ondrop="drop(event)" ondragover="allowDrop(event)" onclick="clickSquare(event)"></div>
+            <div class="square black" id="g3" ondrop="drop(event)" ondragover="allowDrop(event)" onclick="clickSquare(event)"></div>
+            <div class="square white" id="h3" ondrop="drop(event)" ondragover="allowDrop(event)" onclick="clickSquare(event)"></div>
+            <!-- 2nd Rank -->
+            <div class="square white" id="a2" ondrop="drop(event)" ondragover="allowDrop(event)" onclick="clickSquare(event)">
+                <img src="pieces/Pawn(white).png" id="wpawn1" draggable="true" ondragstart="drag(event)" ondragend="dragEnd(event)" alt="pawn">
             </div>
-            <div class="square black" id="b2" ondrop="drop(event)" ondragover="allowDrop(event)">
-                <img src="pieces/Pawn(white).png" id="wpawn2" draggable="true" ondragstart="drag(event)" alt="pawn">
+            <div class="square black" id="b2" ondrop="drop(event)" ondragover="allowDrop(event)" onclick="clickSquare(event)">
+                <img src="pieces/Pawn(white).png" id="wpawn2" draggable="true" ondragstart="drag(event)" ondragend="dragEnd(event)" alt="pawn">
             </div>
-            <div class="square white" id="c2" ondrop="drop(event)" ondragover="allowDrop(event)">
-                <img src="pieces/Pawn(white).png" id="wpawn3" draggable="true" ondragstart="drag(event)" alt="pawn">
+            <div class="square white" id="c2" ondrop="drop(event)" ondragover="allowDrop(event)" onclick="clickSquare(event)">
+                <img src="pieces/Pawn(white).png" id="wpawn3" draggable="true" ondragstart="drag(event)" ondragend="dragEnd(event)" alt="pawn">
             </div>
-            <div class="square black" id="d2" ondrop="drop(event)" ondragover="allowDrop(event)">
-                <img src="pieces/Pawn(white).png" id="wpawn4" draggable="true" ondragstart="drag(event)" alt="pawn">
+            <div class="square black" id="d2" ondrop="drop(event)" ondragover="allowDrop(event)" onclick="clickSquare(event)">
+                <img src="pieces/Pawn(white).png" id="wpawn4" draggable="true" ondragstart="drag(event)" ondragend="dragEnd(event)" alt="pawn">
             </div>
-            <div class="square white" id="e2" ondrop="drop(event)" ondragover="allowDrop(event)">
-                <img src="pieces/Pawn(white).png" id="wpawn5" draggable="true" ondragstart="drag(event)" alt="pawn">
+            <div class="square white" id="e2" ondrop="drop(event)" ondragover="allowDrop(event)" onclick="clickSquare(event)">
+                <img src="pieces/Pawn(white).png" id="wpawn5" draggable="true" ondragstart="drag(event)" ondragend="dragEnd(event)" alt="pawn">
             </div>
-            <div class="square black" id="f2" ondrop="drop(event)" ondragover="allowDrop(event)">
-                <img src="pieces/Pawn(white).png" id="wpawn6" draggable="true" ondragstart="drag(event)" alt="pawn">
+            <div class="square black" id="f2" ondrop="drop(event)" ondragover="allowDrop(event)" onclick="clickSquare(event)">
+                <img src="pieces/Pawn(white).png" id="wpawn6" draggable="true" ondragstart="drag(event)" ondragend="dragEnd(event)" alt="pawn">
             </div>
-            <div class="square white" id="g2" ondrop="drop(event)" ondragover="allowDrop(event)">
-                <img src="pieces/Pawn(white).png" id="wpawn7" draggable="true" ondragstart="drag(event)" alt="pawn">
+            <div class="square white" id="g2" ondrop="drop(event)" ondragover="allowDrop(event)" onclick="clickSquare(event)">
+                <img src="pieces/Pawn(white).png" id="wpawn7" draggable="true" ondragstart="drag(event)" ondragend="dragEnd(event)" alt="pawn">
             </div>
-            <div class="square black" id="h2" ondrop="drop(event)" ondragover="allowDrop(event)">
-                <img src="pieces/Pawn(white).png" id="wpawn8" draggable="true" ondragstart="drag(event)" alt="pawn">
+            <div class="square black" id="h2" ondrop="drop(event)" ondragover="allowDrop(event)" onclick="clickSquare(event)">
+                <img src="pieces/Pawn(white).png" id="wpawn8" draggable="true" ondragstart="drag(event)" ondragend="dragEnd(event)" alt="pawn">
             </div>
             <!-- 1st Rank -->
-            <div class="square black" id="a1" ondrop="drop(event)" ondragover="allowDrop(event)">
-                <img src="pieces/Rook(white).png" id="wrook1" draggable="true" ondragstart="drag(event)" alt="rook">
+            <div class="square black" id="a1" ondrop="drop(event)" ondragover="allowDrop(event)" onclick="clickSquare(event)">
+                <img src="pieces/Rook(white).png" id="wrook1" draggable="true" ondragstart="drag(event)" ondragend="dragEnd(event)" alt="rook">
             </div>
-            <div class="square white" id="b1" ondrop="drop(event)" ondragover="allowDrop(event)">
-                <img src="pieces/Knight(white).png" id="wknight1" draggable="true" ondragstart="drag(event)" alt="knight">
+            <div class="square white" id="b1" ondrop="drop(event)" ondragover="allowDrop(event)" onclick="clickSquare(event)">
+                <img src="pieces/Knight(white).png" id="wknight1" draggable="true" ondragstart="drag(event)" ondragend="dragEnd(event)" alt="knight">
             </div>
-            <div class="square black" id="c1" ondrop="drop(event)" ondragover="allowDrop(event)">
-                <img src="pieces/Bishop(white).png" id="wbishop1" draggable="true" ondragstart="drag(event)" alt="bishop">
+            <div class="square black" id="c1" ondrop="drop(event)" ondragover="allowDrop(event)" onclick="clickSquare(event)">
+                <img src="pieces/Bishop(white).png" id="wbishop1" draggable="true" ondragstart="drag(event)" ondragend="dragEnd(event)" alt="bishop">
             </div>
-            <div class="square white" id="d1" ondrop="drop(event)" ondragover="allowDrop(event)">
-                <img src="pieces/Queen(white).png" id="wqueen" draggable="true" ondragstart="drag(event)" alt="queen">
+            <div class="square white" id="d1" ondrop="drop(event)" ondragover="allowDrop(event)" onclick="clickSquare(event)">
+                <img src="pieces/Queen(white).png" id="wqueen" draggable="true" ondragstart="drag(event)" ondragend="dragEnd(event)" alt="queen">
             </div>
-            <div class="square black" id="e1" ondrop="drop(event)" ondragover="allowDrop(event)">
-                <img src="pieces/King(white).png" id="wking" draggable="true" ondragstart="drag(event)" alt="king">
+            <div class="square black" id="e1" ondrop="drop(event)" ondragover="allowDrop(event)" onclick="clickSquare(event)">
+                <img src="pieces/King(white).png" id="wking" draggable="true" ondragstart="drag(event)" ondragend="dragEnd(event)" alt="king">
             </div>
-            <div class="square white" id="f1" ondrop="drop(event)" ondragover="allowDrop(event)">
-                <img src="pieces/Bishop(white).png" id="wbishop2" draggable="true" ondragstart="drag(event)" alt="bishop">
+            <div class="square white" id="f1" ondrop="drop(event)" ondragover="allowDrop(event)" onclick="clickSquare(event)">
+                <img src="pieces/Bishop(white).png" id="wbishop2" draggable="true" ondragstart="drag(event)" ondragend="dragEnd(event)" alt="bishop">
             </div>
-            <div class="square black" id="g1" ondrop="drop(event)" ondragover="allowDrop(event)">
-                <img src="pieces/Knight(white).png" id="wknight2" draggable="true" ondragstart="drag(event)" alt="knight">
+            <div class="square black" id="g1" ondrop="drop(event)" ondragover="allowDrop(event)" onclick="clickSquare(event)">
+                <img src="pieces/Knight(white).png" id="wknight2" draggable="true" ondragstart="drag(event)" ondragend="dragEnd(event)" alt="knight">
             </div>
-            <div class="square white" id="h1" ondrop="drop(event)" ondragover="allowDrop(event)">
-                <img src="pieces/Rook(white).png" id="wrook2" draggable="true" ondragstart="drag(event)" alt="rook">
+            <div class="square white" id="h1" ondrop="drop(event)" ondragover="allowDrop(event)" onclick="clickSquare(event)">
+                <img src="pieces/Rook(white).png" id="wrook2" draggable="true" ondragstart="drag(event)" ondragend="dragEnd(event)" alt="rook">
             </div>
 
+            <!-- Promotion picker, shown over the board when a pawn reaches the last rank -->
+            <div class="promotionPicker hidden" id="promotionPicker" onclick="cancelPromotion(event)">
+                <div class="promotionChoices">
+                    <img alt="queen" draggable="false" onclick="choosePromotion('queen')">
+                    <img alt="rook" draggable="false" onclick="choosePromotion('rook')">
+                    <img alt="bishop" draggable="false" onclick="choosePromotion('bishop')">
+                    <img alt="knight" draggable="false" onclick="choosePromotion('knight')">
+                </div>
+            </div>
+        </div>
+        <!-- The pieces White has captured, shown on White's side of the board -->
+        <div class="capturedRow" id="whiteCaptures">
+            <span class="capturedImages"></span>
+            <span class="points">0 points</span>
+        </div>
+        <!-- Below the board: "New game" when a game has ended -->
+        <div class="onlinePanel">
+            <div class="panelButtons">
+                <button class="onlineButton hidden" id="newGameButton" onclick="startNewGame()">New game</button>
+            </div>
         </div>
     </body>
 </html>

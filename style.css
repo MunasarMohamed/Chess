@@ -1,23 +1,78 @@
+/* The size of the board: 80% of the screen width, at most 600px, and small enough that the board, the turn
+   indicator, the captured pieces and the buttons below all fit on the screen without scrolling.
+   It is never smaller than 240px. The captured pieces rows use the same width. */
+:root {
+    --boardSize: max(240px, min(80vw, 600px, calc(100vh - 240px)));
+}
+
+/* No default margin, so the page is exactly as high as the screen and does not get a scrollbar. */
 body {
+    margin: 0;
+    padding: 12px 0;
+    box-sizing: border-box;
     min-height: 100vh;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
 }
 
+/* The turn indicator is a light badge on White's turn and a dark badge on Black's turn. */
+.turnIndicator {
+    margin-bottom: 12px;
+    padding: 6px 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: Arial;
+    font-size: 20px;
+    color: #222222;
+    background-color: #ffffff;
+    border: 2px solid #b58863;
+    border-radius: 20px;
+}
+
+.turnIndicator.blackTurn {
+    color: #ffffff;
+    background-color: #222222;
+}
+
+/* A dot in the color of the player whose turn it is, with a gray rim so it shows on both badges. */
+.turnDot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background-color: #ffffff;
+    border: 2px solid #888888;
+}
+
+.blackTurn .turnDot {
+    background-color: #000000;
+}
+
+/* When the game is over, the badge shows the result in the board's colors instead of whose turn it is. */
+.turnIndicator.gameOver {
+    color: #222222;
+    background-color: #f0d9b5;
+    font-weight: bold;
+}
+
+.gameOver .turnDot {
+    display: none;
+}
+
 .chessBoard {
-    height: 80vw;
-    width: 80vw;
+    height: var(--boardSize);
+    width: var(--boardSize);
     margin: 0 auto;
     display: flex;
-    position: absolute;
+    position: relative;
     flex-wrap: wrap;
     justify-content: center;
     align-items: center;
     border-style: solid;
     border-width: 1px;
 }
-
 
 .square {
     height: 12.5%;
@@ -28,7 +83,6 @@ body {
     position: relative;
 }
 
-   
 .white {
     background-color: #f0d9b5;
 }
@@ -37,47 +91,45 @@ body {
     background-color: #b58863;
 }
 
-@media (min-width: 600px) {
-    .chessBoard{
-        height: 600px;
-        width: 600px;
-    }
+/* A row with the pieces a player has captured on the left and the player's points on the right.
+   It has a fixed height, so the board does not move when the first piece is captured. */
+.capturedRow {
+    width: var(--boardSize);
+    height: 28px;
+    margin: 4px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: Arial;
+    font-size: 16px;
 }
 
-.coordinatesLetterw{
-    position: absolute;
-    bottom: 0px;
-    right: 2px;
-    font-family: Arial;
-    font-size: 12px;
-    color: #b58863;
+/* When playing Black online, the board is turned around: both the squares in each rank and the ranks
+   themselves are shown in reverse order, so a1 is at the top right and h8 at the bottom left. */
+.flipped .chessBoard {
+    flex-direction: row-reverse;
+    flex-wrap: wrap-reverse;
+    order: 2;
 }
 
-.coordinatesLetterb{
-    position: absolute;
-    bottom: 0px;
-    right: 2px;
-    font-family: Arial;
-    font-size: 12px;
-    color: #f0d9b5;
+/* The captured pieces rows swap places, so each row stays on its own player's side of the board.
+   The board is order 2 (above), and the turn indicator keeps the default order 0, so it stays on top. */
+.flipped #whiteCaptures {
+    order: 1;
 }
 
-.coordinatesNumberw{
-    position: absolute;
-    top: 0px;
-    left: 2px;
-    font-family: Arial;
-    font-size: 12px;
-    color: #b58863;
+.flipped #blackCaptures {
+    order: 3;
 }
 
-.coordinatesNumberb{
-    position: absolute;
-    top: 0px;
-    left: 2px;
-    font-family: Arial;
-    font-size: 12px;
-    color: #f0d9b5;
+.capturedImages {
+    display: flex;
+}
+
+.capturedImages img {
+    width: 24px;
+    height: 24px;
+    float: none;
 }
 
 img {
@@ -93,3 +145,106 @@ img:hover {
    filter: drop-shadow(1px 1px 2px rgb(38, 38, 39));
 }
 
+/* The selected piece's square. The inset shadow tints the square but stays behind the piece. */
+.selected {
+    box-shadow: inset 0 0 0 100px rgba(255, 235, 59, 0.5);
+}
+
+/* A dot on the empty squares the selected piece can move to. */
+.legalMove::after {
+    content: "";
+    position: absolute;
+    width: 30%;
+    height: 30%;
+    border-radius: 50%;
+    background-color: rgba(0, 0, 0, 0.2);
+    pointer-events: none;
+}
+
+/* A ring around the pieces the selected piece can capture. */
+.legalMove:has(img)::after {
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    background-color: transparent;
+    border: 6px solid rgba(0, 0, 0, 0.2);
+}
+
+/* The squares the last move went from and to. */
+.lastMove {
+    background-image: linear-gradient(rgba(155, 199, 0, 0.4), rgba(155, 199, 0, 0.4));
+}
+
+/* A red glow behind the king when it is in check. */
+.inCheck {
+    background-image: radial-gradient(circle, rgba(255, 0, 0, 0.9) 0%, rgba(255, 0, 0, 0.5) 40%, rgba(255, 0, 0, 0) 75%);
+}
+
+/* The piece being dragged is hidden on its square, so only the piece under the mouse is visible. */
+.dragging {
+    opacity: 0;
+}
+
+/* The promotion picker covers the whole board, so nothing else can be clicked or dragged while choosing. */
+.promotionPicker {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+/* Four choices, each the size of a square on the board. */
+.promotionChoices {
+    width: 50%;
+    display: flex;
+    background-color: #f0d9b5;
+    border-radius: 6px;
+}
+
+.promotionChoices img {
+    width: 25%;
+    height: auto;
+    float: none;
+    cursor: pointer;
+}
+
+/* The panel below the board with the "New game" button.
+   order: 4 keeps it at the bottom when the board is flipped. */
+.onlinePanel {
+    order: 4;
+    margin-top: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    font-family: Arial;
+    font-size: 16px;
+}
+
+/* The buttons below the board, side by side. */
+.panelButtons {
+    display: flex;
+    gap: 8px;
+}
+
+.onlineButton {
+    padding: 6px 16px;
+    font-family: Arial;
+    font-size: 16px;
+    color: #222222;
+    background-color: #f0d9b5;
+    border: 2px solid #b58863;
+    border-radius: 20px;
+    cursor: pointer;
+}
+
+/* Hides an element, for example the promotion picker or the "New game" button.
+   It is the last rule in the file, so it wins over the display of the element's own class. */
+.hidden {
+    display: none;
+}
